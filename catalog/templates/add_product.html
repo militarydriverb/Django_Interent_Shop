@@ -1,37 +1,26 @@
+{% extends 'base.html' %}
 {% load static %}
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Add car</title>
-    <!-- Подключаем Bootstrap CSS (CDN) -->
-    <link href="{% static 'css/bootstrap.min.css' %}"  rel="stylesheet">
-</head>
-<body class="bg-light">
-    <div class="container mt-5">
-        <div class="row justify-content-center">
-            <div class="col-md-6">
-                <div class="card shadow-sm">
-                    <div class="card-header bg-primary text-white">
-                        <h4 class="mb-0">Add new car</h4>
-                    </div>
-                    <div class="card-body">
-                        <form method="post" enctype="multipart/form-data">
-                            {% csrf_token %}
-                            {{ form.as_p }}
-                            <div class="d-grid">
-                                <button type="submit" class="btn btn-primary btn-lg">Add</button>
 
-                            </div>
-                        </form>
-                    </div>
+{% block title %}Add New Car{% endblock %}
+
+{% block content %}
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <div class="card shadow-sm">
+                <div class="card-header bg-primary text-white">
+                    <h4 class="mb-0">Add New Car</h4>
+                </div>
+                <div class="card-body">
+                    <form method="post" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {{ form.as_p }}
+                        <div class="d-grid gap-2">
+                            <button type="submit" class="btn btn-primary btn-lg">Add</button>
+                            <a href="{% url 'catalog:cars' %}" class="btn btn-secondary">Back to Catalog</a>
+                        </div>
+                    </form>
                 </div>
             </div>
         </div>
     </div>
-
-    <!-- Подключаем Bootstrap JS (опционально, если нужны модальные окна и т.п.) -->
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}"></script>
-</body>
-</html>
+{% endblock %}

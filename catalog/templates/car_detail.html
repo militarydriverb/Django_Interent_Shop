@@ -9,7 +9,7 @@
                     <img src="{{ car.image | default:'catalog/product_images/default_car.jpg' | media_filter }}" alt="Фото автомобиля {{ car.name }}">
                     <div class="card-body">
                         <p class="card-title"> {{ car.name }}</p>
-                        <p class="card-text"> {{car.description }}</p>
+                        <p class="card-text"> {{car.description | truncatechars:100 }}</p>
                         <p class="card-text"> price {{ car.price | intcomma }}</p>
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
