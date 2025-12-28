@@ -1,0 +1,23 @@
+{% extends 'catalog/base.html' %}
+{% block content %}
+<div class="container">
+    <div class="row justify-content-center">
+        <div class="col-md-6">
+            <form method="post" enctype="multipart/form-data">
+                <p class="card-text">Do You really want to delete car {{ object.name }} ?</p>
+                <div class="card-body">
+                    {% csrf_token %}
+                    {{ form.as_p }}
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-danger" style="width: 160px; height: 40px;">
+                        {% if object %}Delete{% endif %}
+                    </button>
+                    <a href="{% url 'catalog:cars' %}" class="btn btn-secondary" style="width: 160px; height: 40px;">Back
+                        to Catalog</a>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}
