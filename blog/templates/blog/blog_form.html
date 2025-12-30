@@ -1,0 +1,50 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>{% if object %}Edit blog{% else %}New blog{% endif %}</h1>
+                <form method="post" enctype="multipart/form-data">
+                    {% csrf_token %}
+                    <div class="mb-3">
+                        {{ form.title.label_tag }}
+                        {{ form.title }}
+                        {% if form.title.errors %}
+                            <div class="text-danger">{{ form.title.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.content.label_tag }}
+                        {{ form.content }}
+                        {% if form.content.errors %}
+                            <div class="text-danger">{{ form.content.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3">
+                        {{ form.preview.label_tag }}
+                        {{ form.preview }}
+                        {% if form.preview.errors %}
+                            <div class="text-danger">{{ form.preview.errors }}</div>
+                        {% endif %}
+                        {% if form.instance.preview %}
+                            <div class="mt-2">
+                                <img src="{{ form.instance.preview.url }}" class="img-fluid" style="max-height: 200px;" alt="Текущее превью">
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="mb-3 form-check">
+                        {{ form.is_published.label_tag }}
+                        {{ form.is_published }}
+                        {% if form.is_published.errors %}
+                            <div class="text-danger">{{ form.is_published.errors }}</div>
+                        {% endif %}
+                    </div>
+                    <button type="submit" class="btn btn-primary">Save</button>
+                    <a href="{% url 'blog:blog_list' %}" class="btn btn-secondary">Delete</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
