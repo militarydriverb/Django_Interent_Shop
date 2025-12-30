@@ -1,4 +1,6 @@
 from django.db import models
+from django.core.mail import send_mail
+from django.conf import settings
 
 
 class Blog(models.Model):
@@ -16,3 +18,17 @@ class Blog(models.Model):
 
     def __str__(self):
         return self.title
+
+    def save(self, *args, **kwargs):
+        # Сохраняем объект
+        super().save(*args, **kwargs)
+        
+        # Проверяем, достиг ли счетчик просмотров 10
+        if self.views_count == 10:
+            send_mail(
+                subject='Поздравляем с достижением!',
+                message=f'Ваша статья "{self.title}" достигла 10 просмотров! Поздравляем!',
+                from_email=settings.DEFAULT_FROM_EMAIL,
+                recipient_list=[settings.EMAIL_HOST_USER],
+                fail_silently=False,
+            )
