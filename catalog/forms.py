@@ -22,7 +22,7 @@ class ProductForm(forms.ModelForm):
         name = self.cleaned_data["name"]
         for word in FORBIDDEN_WORDS:
             if word.lower() in name.lower():
-                raise forms.ValidationError(f"Использование слова '{word}' запрещено.")
+                raise forms.ValidationError(f"Word usage '{word}' forbidden.")
         return name
 
     def clean_description(self):
@@ -30,5 +30,11 @@ class ProductForm(forms.ModelForm):
         if description:
             for word in FORBIDDEN_WORDS:
                 if word.lower() in description.lower():
-                    raise forms.ValidationError(f"Использование слова '{word}' запрещено.")
+                    raise forms.ValidationError(f"Word usage '{word}' forbidden.")
         return description
+
+    def clean_price(self):
+        price = self.cleaned_data["price"]
+        if not isinstance(price, (int, float)) or price <= 0:
+            raise forms.ValidationError("Price must be a positive number.")
+        return price
