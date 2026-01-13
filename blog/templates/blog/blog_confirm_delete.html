@@ -1,0 +1,20 @@
+{% extends 'catalog/base.html' %}
+{% load static %}
+
+{% block content %}
+    <div class="container">
+        <div class="row">
+            <div class="col-12">
+                <h1>Confirm Deletion</h1>
+                <p>Are you sure you want to delete the blog "{{ object.title }}"?</p>
+                <p class="text-danger">Warning: This action cannot be undone!</p>
+                
+                <form method="post">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger">Yes, delete</button>
+                    <a href="{% url 'blog:blog_list' %}" class="btn btn-secondary">Cancel</a>
+                </form>
+            </div>
+        </div>
+    </div>
+{% endblock %}
