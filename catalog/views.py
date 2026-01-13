@@ -77,7 +77,8 @@ class ProductDetailView(DetailView):
 
 class ProductCreateView(CreateView):
     model = Product
-    fields = ["name", "description", "category", "price", "image"]
+    # fields = ["name", "description", "category", "price", "image"]
+    form_class = ProductForm
     success_url = reverse_lazy("catalog:cars")
 
 
@@ -94,7 +95,8 @@ class ProductCreateView(CreateView):
 
 class ProductUpdateView(UpdateView):
     model = Product
-    fields = ["name", "description", "category", "price", "image"]
+    # fields = ["name", "description", "category", "price", "image"]
+    form_class = ProductForm
     success_url = reverse_lazy("catalog:cars")
 
 
