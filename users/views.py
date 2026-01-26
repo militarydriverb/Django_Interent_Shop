@@ -30,7 +30,7 @@ class UserCreateView(CreateView):
         url = f'http://{host}/users/email-confirm/{token}/'
         send_mail(
             subject="Confirm your email",
-            message=f"Hello!! Welcome { user.get_username }\n\n"
+            message=f"Hello!! Welcome {user.email.split('@')[0].title()}\n\n"
                     "Please confirm your email address:\n\n" 
                     f"{url}",
             from_email=EMAIL_HOST_USER,
