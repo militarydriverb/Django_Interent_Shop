@@ -1,4 +1,5 @@
 from django.http import HttpResponse
+from django.contrib.auth.mixins import LoginRequiredMixin
 from django.views import View
 from django.shortcuts import render, get_object_or_404, redirect
 
@@ -75,7 +76,7 @@ class ProductDetailView(DetailView):
 #     return render(request, "add_product.html", {"form": form})
 
 
-class ProductCreateView(CreateView):
+class ProductCreateView(LoginRequiredMixin, CreateView):
     model = Product
     # fields = ["name", "description", "category", "price", "image"]
     form_class = ProductForm
@@ -93,13 +94,13 @@ class ProductCreateView(CreateView):
 #         form = ProductForm(instance=product)
 #     return render(request, "edit_product.html", {"form": form})
 
-class ProductUpdateView(UpdateView):
+class ProductUpdateView(LoginRequiredMixin, UpdateView):
     model = Product
     # fields = ["name", "description", "category", "price", "image"]
     form_class = ProductForm
     success_url = reverse_lazy("catalog:cars")
 
 
-class ProductDeleteView(DeleteView):
+class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:cars")
