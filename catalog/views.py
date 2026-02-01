@@ -106,7 +106,7 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
         user = self.request.user
         if user == self.object.owner:
             return ProductForm
-        if user.has_perm("catalog.can_unpublish_product") and ("catalog.can_delete_any_product"):
+        if user.has_perm("catalog.can_unpublish_product") and user.has_perm("catalog.can_delete_any_product"):
             return ProductModeratorForm
         raise PermissionDenied
 
@@ -115,9 +115,8 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:cars")
 
-    def get_form_class(self):
-        user = self.request.user
-        if user == self.object.owner or user.has_perm("catalog.can_unpublish_product") and (
-        "catalog.can_delete_any_product"):
-            return DeleteView
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        if user == self.get_object().owner or (user.has_perm("catalog.can_unpublish_product") and user.has_perm("catalog.can_delete_any_product")):
+            return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied
