@@ -1,3 +1,4 @@
+from django.contrib.auth.models import User
 from django.db import models
 from django.core.mail import send_mail
 from django.conf import settings
@@ -11,10 +12,17 @@ class Blog(models.Model):
     is_published = models.BooleanField(default=False, verbose_name="Признак публикации")
     views_count = models.PositiveIntegerField(default=0, verbose_name="Количество просмотров")
 
+    author = models.ForeignKey(settings.AUTH_USER_MODEL, on_delete=models.SET_NULL, null=True, blank=True, verbose_name="Автор")
+    
+
     class Meta:
         verbose_name = "Блог"
         verbose_name_plural = "Блоги"
         ordering = ["created_at"]
+        permissions = [
+            ("can_unpublish_blog", "Can unpublish blog post"),
+            ("can_view_all_blogs", "Can view all blog posts"),
+        ]
 
     def __str__(self):
         return self.title
