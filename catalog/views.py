@@ -5,9 +5,10 @@ from django.shortcuts import render, get_object_or_404, redirect
 
 from django.urls import reverse_lazy, reverse
 from django.views.generic import ListView, DetailView, CreateView, UpdateView, DeleteView, TemplateView
+from django.core.exceptions import PermissionDenied
 
 from catalog.apps import CatalogConfig
-from catalog.forms import ProductForm
+from catalog.forms import ProductForm, ProductModeratorForm
 from catalog.models import Product
 
 
@@ -42,7 +43,6 @@ class ContactsView(View):
                       )
 
 
-
 # def cars(request):
 #     cars = Product.objects.all()
 #     context = {"cars": cars}
@@ -52,7 +52,6 @@ class ContactsView(View):
 
 class ProductsListView(ListView):
     model = Product
-
 
 
 # def car_detail(request, pk):
@@ -82,6 +81,9 @@ class ProductCreateView(LoginRequiredMixin, CreateView):
     form_class = ProductForm
     success_url = reverse_lazy("catalog:cars")
 
+    def form_valid(self, form):
+        form.instance.owner = self.request.user  # автоматически устанавливаем владельца
+        return super().form_valid(form)
 
 # def edit_product(request, pk):
 #     product = get_object_or_404(Product, pk=pk)
@@ -100,7 +102,21 @@ class ProductUpdateView(LoginRequiredMixin, UpdateView):
     form_class = ProductForm
     success_url = reverse_lazy("catalog:cars")
 
+    def get_form_class(self):
+        user = self.request.user
+        if user == self.object.owner:
+            return ProductForm
+        if user.has_perm("catalog.can_unpublish_product") and user.has_perm("catalog.can_delete_any_product"):
+            return ProductModeratorForm
+        raise PermissionDenied
+
 
 class ProductDeleteView(LoginRequiredMixin, DeleteView):
     model = Product
     success_url = reverse_lazy("catalog:cars")
+
+    def dispatch(self, request, *args, **kwargs):
+        user = request.user
+        if user == self.get_object().owner or (user.has_perm("catalog.can_unpublish_product") and user.has_perm("catalog.can_delete_any_product")):
+            return super().dispatch(request, *args, **kwargs)
+        raise PermissionDenied

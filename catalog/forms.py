@@ -29,7 +29,7 @@ class StyleFormMixin():
 class ProductForm(StyleFormMixin, forms.ModelForm):
     class Meta:
         model = Product
-        fields = ("name", "description", "image", "price")
+        fields = ("name", "description", "category" ,"image", "price")
 
     def clean_name(self):
         name = self.cleaned_data["name"]
@@ -58,10 +58,16 @@ class ProductForm(StyleFormMixin, forms.ModelForm):
             # Проверка размера файла (максимум 5 МБ)
             if image.size > 5 * 1024 * 1024:
                 raise forms.ValidationError("Image size should not exceed 5 MB.")
-            
+
             # Проверка формата файла
             import os
             ext = os.path.splitext(image.name)[1].lower()
             if ext not in [".jpg", ".jpeg", ".png"]:
                 raise forms.ValidationError("Only JPEG and PNG formats are permitted.")
         return image
+
+
+class ProductModeratorForm(StyleFormMixin, forms.ModelForm):
+    class Meta:
+        model = Product
+        fields = ("status",)

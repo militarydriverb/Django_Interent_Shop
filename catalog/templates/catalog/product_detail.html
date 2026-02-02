@@ -14,14 +14,13 @@
                         <div class="d-flex justify-content-between align-items-center">
                             <div class="btn-group">
                                 {% if user.is_authenticated %}
-                                    <a class="btn btn-primary" href="{% url 'catalog:cars'%}" role="button">Back</a>
-                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:edit_product' product.pk %}" role="button">Edit</a>
-                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:contacts'%}" role="button">Contacts</a>
-                                    <a class="btn btn-danger" href="{% url 'catalog:delete_product' product.pk  %}" role="button">Delete</a>
-                                {% else %}
-                                    <a class="btn btn-primary" href="{% url 'catalog:cars'%}" role="button">Back</a>
-                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:contacts'%}" role="button">Contacts</a>
+                                <a class="btn btn-primary" href="{% url 'catalog:cars'%}" role="button">Back</a>
+                                    {% if perms.catalog.can_unpublish_product and perms.catalog.can_delete_any_product or user == object.owner %}
+                                    <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:edit_product' object.pk %}" role="button">Edit</a>
+                                    <a class="btn btn-danger" href="{% url 'catalog:delete_product' object.pk  %}" role="button">Delete</a>
+                                    {% endif %}
                                 {% endif %}
+                                <a class="btn btn-sm btn-outline-secondary" href="{% url 'catalog:contacts'%}" role="button">Contacts</a>
                             </div>
                         </div>
                     </div>
