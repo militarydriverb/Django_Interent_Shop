@@ -9,11 +9,9 @@ from django.core.exceptions import PermissionDenied
 
 from catalog.apps import CatalogConfig
 from catalog.forms import ProductForm, ProductModeratorForm
-from catalog.models import Product
+from catalog.models import Product, Category
+from catalog.services import get_products_from_cache, get_products_by_category
 
-
-# def home(request):
-#     return render(request, "catalog/home.html")
 
 class HomeView(TemplateView):
     template_name = 'catalog/home.html'
@@ -52,6 +50,10 @@ class ContactsView(View):
 
 class ProductsListView(ListView):
     model = Product
+    template_name = 'catalog/product_list.html'
+
+    def get_queryset(self):
+        return get_products_from_cache()
 
 
 # def car_detail(request, pk):
@@ -62,6 +64,16 @@ class ProductsListView(ListView):
 
 class ProductDetailView(DetailView):
     model = Product
+
+    def get_object(self, queryset=None):
+        """Переопределяем метод для получения объекта из кэша"""
+        pk = self.kwargs.get('pk')
+        products = get_products_from_cache()
+        for product in products:
+            if product.pk == pk:
+                return product
+        # Если не найдено в кэше, получаем из БД
+        return get_object_or_404(Product, pk=pk)
 
 
 # def add_product(request):
@@ -120,3 +132,18 @@ class ProductDeleteView(LoginRequiredMixin, DeleteView):
         if user == self.get_object().owner or (user.has_perm("catalog.can_unpublish_product") and user.has_perm("catalog.can_delete_any_product")):
             return super().dispatch(request, *args, **kwargs)
         raise PermissionDenied
+
+class ProductsByCategoryView(ListView):
+    """Представление для отображения продуктов в указанной категории"""
+    model = Product
+    template_name = 'catalog/products_by_category.html'
+    context_object_name = 'products'
+
+    def get_queryset(self):
+        category_id = self.kwargs['category_id']
+        return get_products_by_category(category_id)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['category'] = get_object_or_404(Category, id=self.kwargs['category_id'])
+        return context

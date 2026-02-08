@@ -155,3 +155,25 @@ EMAIL_HOST_USER = os.getenv('EMAIL_HOST_USER')
 EMAIL_HOST_PASSWORD = os.getenv('EMAIL_HOST_PASSWORD')
 SERVER_EMAIL = os.getenv('SERVER_EMAIL')
 DEFAULT_FROM_EMAIL = os.getenv('DEFAULT_FROM_EMAIL')
+
+CACHE_ENABLED = os.getenv('CACHE_ENABLED', 'True') == 'True'
+
+if CACHE_ENABLED:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.redis.RedisCache",
+            "LOCATION": os.getenv('REDIS_HOST'),
+            'TIMEOUT': 60,
+            'OPTIONS': {
+                'encoding': 'utf-8',
+            }
+        }
+    }
+else:
+    # Опционально: задать поведение по умолчанию (например, кэш в памяти)
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "TIMEOUT": 300
+        }
+    }
